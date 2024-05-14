@@ -8,6 +8,7 @@ router.use(VerifyMiddleware.verifyToken, VerifyMiddleware.verifyTeacher);
 
 router.get('/', TeacherClassController.getClasses);
 router.post('/', TeacherClassController.createClass);
+router.get('/code', TeacherClassController.generateRandomCode);
 router.get('/:classId/students', TeacherClassController.getStudentsByClassId);
 router.get('/:classId/evaluations', TeacherClassController.getEvaluationsByClassId);
 

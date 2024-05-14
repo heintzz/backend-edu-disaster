@@ -1,8 +1,6 @@
 const pool = require('../../config/db');
 
-const createClass = async (req, res) => {
-  const { name } = req.body;
-
+const generateRandomCode = async (req, res) => {
   const searchClassQuery = `
       SELECT id, name
       FROM classes
@@ -11,11 +9,28 @@ const createClass = async (req, res) => {
   while (true) {
     var classCode = Math.random().toString(36).substring(2, 8);
 
-    const { rows: classRows } = await pool.query(searchClassQuery, [classCode]);
-    if (classRows.length === 0) {
-      break;
+    try {
+      const { rows: classRows } = await pool.query(searchClassQuery, [classCode]);
+      if (classRows.length === 0) {
+        res.status(200).send({
+          success: true,
+          message: 'random code generated',
+          data: { classCode },
+        });
+        break;
+      }
+    } catch (error) {
+      res.status(500).send({
+        success: false,
+        message: 'internal server error',
+        data: [],
+      });
     }
   }
+};
+
+const createClass = async (req, res) => {
+  const { name, classCode } = req.body;
 
   const createClassQuery = `
     INSERT INTO classes (name, class_code, teacher_id, institution_id)
@@ -127,8 +142,9 @@ getEvaluationsByClassId = async (req, res) => {
 };
 
 const TeacherClassController = {
-  createClass,
   getClasses,
+  createClass,
+  generateRandomCode,
   getStudentsByClassId,
   getEvaluationsByClassId,
 };
