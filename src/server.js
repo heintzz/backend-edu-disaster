@@ -1,13 +1,15 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const pool = require('./config/db');
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3008;
 
 app.use(express.json());
+app.use(cors());
 
 pool.connect((err, client, release) => {
   console.log('[⚡database]: Connected to postgresql');

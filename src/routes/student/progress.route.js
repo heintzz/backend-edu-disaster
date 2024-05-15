@@ -1,6 +1,6 @@
 const express = require('express');
 const VerifyMiddleware = require('../../middleware/verify');
-const UserProgressController = require('../../controllers/student/progress.controller');
+const UserProgressController = require('../../controllers/student/progress.controller.js');
 
 const router = express.Router();
 

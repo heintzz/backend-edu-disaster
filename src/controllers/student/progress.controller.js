@@ -42,7 +42,6 @@ const getProgress = async (req, res) => {
 
 const addProgress = async (req, res) => {
   const { lessonId, completionDate } = req.body;
-  const classId = req.query.class_id;
   const studentId = req.userId;
 
   const searchStudentQuery = `
@@ -61,15 +60,14 @@ const addProgress = async (req, res) => {
   }
 
   const insertProgressQuery = `
-    INSERT into progress (student_id, class_id, lesson_id, completed, completion_date)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT into progress (student_id, lesson_id, completed, completion_date)
+    VALUES ($1, $2, $3, $4)
     RETURNING id, completed, completion_date
     `;
 
   try {
     const { rows: insertedRows } = await pool.query(insertProgressQuery, [
       studentId,
-      classId,
       lessonId,
       true,
       completionDate,
@@ -81,9 +79,10 @@ const addProgress = async (req, res) => {
       data: insertedRows,
     });
   } catch (error) {
+    console.log(error)
     res.status(500).send({
       success: false,
-      message: 'internal server error',
+      message: error.message || 'internal server error',
       data: [],
     });
   }
