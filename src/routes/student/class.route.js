@@ -4,6 +4,6 @@ const UserClassController = require('../../controllers/student/class.controller'
 
 const router = express.Router();
 
-router.post('/:classId/join', VerifyMiddleware.verifyToken, UserClassController.joinClass);
+router.post('/:classCode/join', VerifyMiddleware.verifyToken, UserClassController.joinClass);
 
 module.exports = router;

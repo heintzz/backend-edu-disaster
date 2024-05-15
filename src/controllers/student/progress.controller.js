@@ -19,7 +19,7 @@ const getProgress = async (req, res) => {
   }
 
   const searchProgressQuery = `
-    SELECT lesson_id, completed, completion_date
+    SELECT lesson_id, is_completed, completion_date
     FROM progress
     WHERE student_id = $1`;
 
@@ -59,10 +59,25 @@ const addProgress = async (req, res) => {
     });
   }
 
+  const searchProgressQuery = `
+    SELECT lesson_id, is_completed, completion_date
+    FROM progress
+    WHERE student_id = $1 AND lesson_id = $2`;
+
+  const { rows: progressRows } = await pool.query(searchProgressQuery, [studentId, lessonId]);
+
+  if (progressRows.length > 0) {
+    return res.status(200).send({
+      success: true,
+      message: 'student progress already exists',
+      data: progressRows,
+    });
+  }
+
   const insertProgressQuery = `
-    INSERT into progress (student_id, lesson_id, completed, completion_date)
+    INSERT into progress (student_id, lesson_id, is_completed, completion_date)
     VALUES ($1, $2, $3, $4)
-    RETURNING id, completed, completion_date
+    RETURNING id, is_completed, completion_date
     `;
 
   try {
@@ -79,7 +94,7 @@ const addProgress = async (req, res) => {
       data: insertedRows,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       success: false,
       message: error.message || 'internal server error',

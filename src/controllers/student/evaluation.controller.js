@@ -2,7 +2,6 @@ const pool = require('../../config/db');
 
 const getEvaluationById = async (req, res) => {
   const evaluationId = req.params.evaluationId;
-  console.log(evaluationId);
 
   const searchEvaluationQuery = `
     SELECT id, answers, is_completed, score
@@ -36,7 +35,6 @@ const getEvaluationById = async (req, res) => {
 
 const getEvaluations = async (req, res) => {
   const userId = req.userId;
-  console.log(userId);
 
   const searchEvaluationQuery = `
     SELECT id, answers, is_completed, score

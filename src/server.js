@@ -12,11 +12,11 @@ app.use(express.json());
 app.use(cors());
 
 pool.connect((err, client, release) => {
-  console.log('[⚡database]: Connected to postgresql');
   if (err) {
     console.error('Error acquiring client', err.stack);
     return;
   }
+  console.log('[⚡database]: Connected to postgresql');
   client?.query('SELECT NOW()', (err, result) => {
     release();
     if (err) {

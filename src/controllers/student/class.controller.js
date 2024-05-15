@@ -1,14 +1,14 @@
 const pool = require('../../config/db');
 
 const joinClass = async (req, res) => {
-  const { classId } = req.params;
+  const { classCode } = req.params;
 
   const searchClassQuery = `
-    SELECT id, name
+    SELECT id, name, institution_id
     FROM classes
-    WHERE id = $1`;
+    WHERE class_code = $1`;
 
-  const { rows: classRows } = await pool.query(searchClassQuery, [classId]);
+  const { rows: classRows } = await pool.query(searchClassQuery, [classCode]);
 
   if (classRows.length === 0) {
     return res.status(404).send({
@@ -21,11 +21,11 @@ const joinClass = async (req, res) => {
   const classData = classRows[0];
 
   const joinClassQuery = `
-    INSERT INTO students_classes (student_id, class_id)
-    VALUES ($1, $2)`;
+    INSERT INTO students_classes (student_id, class_id, institution_id)
+    VALUES ($1, $2, $3)`;
 
   try {
-    await pool.query(joinClassQuery, [req.userId, classData.id]);
+    await pool.query(joinClassQuery, [req.userId, classData.id, classData.institution_id]);
     res.status(200).send({
       success: true,
       message: 'joined class successfully',
@@ -34,7 +34,7 @@ const joinClass = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: 'internal server error',
+      message: error.message,
       data: [],
     });
   }
