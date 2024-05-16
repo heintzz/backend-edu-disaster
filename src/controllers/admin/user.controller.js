@@ -39,7 +39,7 @@ const updateUserRole = async (req, res) => {
 
   const updateUserQuery = `
     UPDATE users
-    SET role = $1
+    SET role = $1, is_verified = true
     WHERE id = $2`;
 
   try {

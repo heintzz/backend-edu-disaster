@@ -21,6 +21,11 @@ const verifyAdmin = (req, res, next) => {
 
 const verifyTeacher = (req, res, next) => {
   if (req.role !== enums.ROLE.TEACHER) return res.status(403).send({ message: 'forbidden' });
+
+  if (!req.is_verified) {
+    return res.status(401).send({ message: 'teacher not verified yet' });
+  }
+
   next();
 };
 
