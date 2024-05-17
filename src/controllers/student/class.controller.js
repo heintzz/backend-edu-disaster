@@ -18,6 +18,24 @@ const joinClass = async (req, res) => {
     });
   }
 
+  const searchStudentClassQuery = `
+    SELECT student_id, class_id
+    FROM students_classes
+    WHERE student_id = $1 AND class_id = $2`;
+
+  const { rows: studentClassRows } = await pool.query(searchStudentClassQuery, [
+    req.userId,
+    classRows[0].id,
+  ]);
+
+  if (studentClassRows.length > 0) {
+    return res.status(400).send({
+      success: false,
+      message: 'already joined class',
+      data: [],
+    });
+  }
+
   const classData = classRows[0];
 
   const joinClassQuery = `
