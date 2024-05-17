@@ -30,17 +30,18 @@ const generateRandomCode = async (req, res) => {
 };
 
 const createClass = async (req, res) => {
-  const { name, classCode } = req.body;
+  const { name, classCode, academicYear } = req.body;
 
   const createClassQuery = `
-    INSERT INTO classes (name, class_code, teacher_id, institution_id)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO classes (name, class_code, academic_year, teacher_id, institution_id)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING id, name, class_code`;
 
   try {
     const { rows } = await pool.query(createClassQuery, [
       name,
       classCode,
+      academicYear,
       req.userId,
       req.institutionId,
     ]);
@@ -66,6 +67,41 @@ const getClasses = async (req, res) => {
 
   try {
     const { rows } = await pool.query(getClassesQuery, [req.userId]);
+    res.status(200).send({
+      success: true,
+      data: rows,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'internal server error',
+      data: [],
+    });
+  }
+};
+
+const getStudentsByTeacherId = async (req, res) => {
+  const classId = req.query.class_id;
+
+  const values = [req.userId];
+
+  let getStudentsQuery = `
+      SELECT u.id, u.name, u.email
+      FROM users u
+      JOIN students_classes sc
+      ON u.id = sc.student_id
+      JOIN classes c
+      ON sc.class_id = c.id
+      WHERE c.teacher_id = $1
+      `;
+
+  if (classId) {
+    getStudentsQuery += `AND sc.class_id = $2`;
+    values.push(classId);
+  }
+
+  try {
+    const { rows } = await pool.query(getStudentsQuery, [...values]);
     res.status(200).send({
       success: true,
       data: rows,
@@ -105,7 +141,7 @@ const getStudentsByClassId = async (req, res) => {
   }
 };
 
-getEvaluationsByClassId = async (req, res) => {
+const getEvaluationsByClassId = async (req, res) => {
   const classId = req.params.classId;
 
   const searchEvaluationQuery = `
@@ -146,6 +182,7 @@ const TeacherClassController = {
   createClass,
   generateRandomCode,
   getStudentsByClassId,
+  getStudentsByTeacherId,
   getEvaluationsByClassId,
 };
 

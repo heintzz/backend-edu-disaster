@@ -69,7 +69,7 @@ const Login = async (req, res) => {
   const { email, password } = req.body;
 
   const searchUserQuery = `
-    SELECT id, name, email, role, password, institution_id
+    SELECT id, name, email, role, password, institution_id, is_verified
     FROM users
     WHERE email = $1
   `;
@@ -93,13 +93,14 @@ const Login = async (req, res) => {
       email: user.email,
       role: user.role,
       institution_id: user.institution_id,
+      is_verified: user.is_verified,
     };
 
     const token = jwt.sign(dataToSign, process.env.SECRET_ACCESS_TOKEN);
 
     res.cookie('access_token', token, {
-      httpOnly: true,
       secure: true,
+      httpOnly: false,
       sameSite: 'None',
       maxAge: 24 * 3600 * 1000,
     });

@@ -10,6 +10,7 @@ const verifyToken = (req, res, next) => {
     req.role = decoded.role;
     req.userId = decoded.user_id;
     req.institutionId = decoded.institution_id;
+    req.isVerified = decoded.is_verified;
     next();
   });
 };
@@ -22,7 +23,7 @@ const verifyAdmin = (req, res, next) => {
 const verifyTeacher = (req, res, next) => {
   if (req.role !== enums.ROLE.TEACHER) return res.status(403).send({ message: 'forbidden' });
 
-  if (!req.is_verified) {
+  if (!req.isVerified) {
     return res.status(401).send({ message: 'teacher not verified yet' });
   }
 
