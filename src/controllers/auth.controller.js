@@ -88,38 +88,44 @@ const Login = async (req, res) => {
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (passwordMatch) {
-    const token = jwt.sign(
-      {
-        user_id: user.id,
-        email: user.email,
-        role: user.role,
-        institution_id: user.institution_id,
-      },
-      process.env.SECRET_ACCESS_TOKEN
-    );
+    const dataToSign = {
+      user_id: user.id,
+      email: user.email,
+      role: user.role,
+      institution_id: user.institution_id,
+    };
+
+    const token = jwt.sign(dataToSign, process.env.SECRET_ACCESS_TOKEN);
 
     res.cookie('access_token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'none',
+      sameSite: 'None',
+      maxAge: 24 * 3600 * 1000,
     });
 
-    return res.status(200).send({
+    res.status(200).send({
       success: true,
       message: 'user logged in successfully',
       accessToken: token,
     });
+  } else {
+    res.status(401).send({
+      success: false,
+      message: 'invalid credentials',
+    });
   }
+};
 
-  return res.status(401).send({
-    success: false,
-    message: 'invalid credentials',
-  });
+const Logout = async (req, res) => {
+  res.clearCookie('access_token', { httpOnly: true });
+  res.status(200).send({ success: true, message: 'user logged out successfully' });
 };
 
 const AuthController = {
   Signup,
   Login,
+  Logout,
 };
 
 module.exports = AuthController;

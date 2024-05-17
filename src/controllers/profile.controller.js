@@ -4,7 +4,7 @@ const getProfile = async (req, res) => {
   const id = req.userId;
 
   const searchUserQuery = `
-    SELECT id, name, email
+    SELECT id, name, email, role, is_verified
     FROM users
     WHERE id = $1`;
 
@@ -29,7 +29,7 @@ const updateProfile = async (req, res) => {
   const { name, email } = req.body;
 
   const searchUserQuery = `
-    SELECT id, name, email
+    SELECT id, name, email, role
     FROM users
     WHERE id = $1`;
 

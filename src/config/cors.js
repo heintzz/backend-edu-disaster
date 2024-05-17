@@ -10,6 +10,7 @@ const corsOptions = {
   },
   credentials: true,
   optionsSuccessStatus: 200,
+  headers: ['Authorization', 'Content-Type'],
 };
 
 module.exports = corsOptions;

@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 const pool = require('./config/db');
 const cors = require('cors');
+const corsOptions = require('./config/cors');
 
 dotenv.config();
 
@@ -9,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 3008;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 pool.connect((err, client, release) => {
   if (err) {
@@ -33,6 +34,7 @@ apiV1Router.use('/student', require('./routes/student/index.route'));
 apiV1Router.use('/admin', require('./routes/admin/index.route'));
 apiV1Router.use('/superadmin', require('./routes/superadmin/index.route'));
 apiV1Router.use('/teacher', require('./routes/teacher/index.route'));
+apiV1Router.use('/profile', require('./routes/general/profile.route'));
 
 app.use('/api/v1', apiV1Router);
 
