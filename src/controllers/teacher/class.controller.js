@@ -80,67 +80,6 @@ const getClasses = async (req, res) => {
   }
 };
 
-const getStudentsByTeacherId = async (req, res) => {
-  const classId = req.query.class_id;
-
-  const values = [req.userId];
-
-  let getStudentsQuery = `
-      SELECT u.id, u.name, u.email
-      FROM users u
-      JOIN students_classes sc
-      ON u.id = sc.student_id
-      JOIN classes c
-      ON sc.class_id = c.id
-      WHERE c.teacher_id = $1
-      `;
-
-  if (classId) {
-    getStudentsQuery += `AND sc.class_id = $2`;
-    values.push(classId);
-  }
-
-  try {
-    const { rows } = await pool.query(getStudentsQuery, [...values]);
-    res.status(200).send({
-      success: true,
-      data: rows,
-    });
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: 'internal server error',
-      data: [],
-    });
-  }
-};
-
-const getStudentsByClassId = async (req, res) => {
-  const { classId } = req.params;
-
-  const getStudentsQuery = `
-      SELECT u.id, u.name
-      FROM users u
-      JOIN students_classes sc
-      ON u.id = sc.student_id
-      WHERE sc.class_id = $1
-      `;
-
-  try {
-    const { rows } = await pool.query(getStudentsQuery, [classId]);
-    res.status(200).send({
-      success: true,
-      data: rows,
-    });
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: 'internal server error',
-      data: [],
-    });
-  }
-};
-
 const getEvaluationsByClassId = async (req, res) => {
   const classId = req.params.classId;
 
@@ -181,8 +120,6 @@ const TeacherClassController = {
   getClasses,
   createClass,
   generateRandomCode,
-  getStudentsByClassId,
-  getStudentsByTeacherId,
   getEvaluationsByClassId,
 };
 
