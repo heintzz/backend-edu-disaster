@@ -41,7 +41,7 @@ const getProgress = async (req, res) => {
 };
 
 const addProgress = async (req, res) => {
-  const { lessonId, completionDate } = req.body;
+  const { lessonId } = req.body;
   const studentId = req.userId;
 
   const searchStudentQuery = `
@@ -75,9 +75,9 @@ const addProgress = async (req, res) => {
   }
 
   const insertProgressQuery = `
-    INSERT into progress (student_id, lesson_id, is_completed, completion_date)
-    VALUES ($1, $2, $3, $4)
-    RETURNING id, is_completed, completion_date
+    INSERT into progress (student_id, lesson_id, is_completed)
+    VALUES ($1, $2, $3)
+    RETURNING id, lesson_id, is_completed
     `;
 
   try {
@@ -85,7 +85,6 @@ const addProgress = async (req, res) => {
       studentId,
       lessonId,
       true,
-      completionDate,
     ]);
 
     res.status(201).send({
