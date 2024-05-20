@@ -2,9 +2,9 @@
   "name": "backend-edu-disaster",
   "version": "1.0.0",
   "description": "backend platform edu disaster",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon src/server.js"
+    "start": "nodemon src/index.js"
   },
   "author": "hasnan",
   "license": "ISC",
