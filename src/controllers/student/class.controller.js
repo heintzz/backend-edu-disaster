@@ -58,7 +58,33 @@ const joinClass = async (req, res) => {
   }
 };
 
+const getClasses = async (req, res) => {
+  const searchClassesQuery = `
+    SELECT classes.id, classes.name, classes.class_code, institutions.name as institution
+    FROM classes
+    JOIN institutions ON classes.institution_id = institutions.id
+    JOIN students_classes ON classes.id = students_classes.class_id
+    WHERE students_classes.student_id = $1`;
+
+  try {
+    const { rows: classesRows } = await pool.query(searchClassesQuery, [req.userId]);
+
+    res.status(200).send({
+      success: true,
+      message: 'student classes retrieved',
+      data: classesRows,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'internal server error',
+      data: [],
+    });
+  }
+};
+
 const UserClassController = {
+  getClasses,
   joinClass,
 };
 
