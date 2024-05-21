@@ -27,6 +27,10 @@ pool.connect((err, client, release) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.send('Backend edudisaster!');
+});
+
 const apiV1Router = express.Router();
 
 apiV1Router.use('/auth', require('./routes/general/auth.route'));
