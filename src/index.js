@@ -28,7 +28,7 @@ pool.connect((err, client, release) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Backend edudisaster!');
+  res.send('Backend edu disaster!');
 });
 
 const apiV1Router = express.Router();
