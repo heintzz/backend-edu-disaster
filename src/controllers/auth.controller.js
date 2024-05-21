@@ -101,9 +101,8 @@ const Login = async (req, res) => {
     res.cookie('access_token', token, {
       secure: true,
       httpOnly: true,
-      sameSite: 'None',
+      sameSite: 'strict',
       maxAge: 24 * 3600 * 1000,
-      
     });
 
     res.status(200).send({
