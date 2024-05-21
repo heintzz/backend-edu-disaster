@@ -1,4 +1,4 @@
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:3000', 'https://edu-disaster.vercel.app/'];
 
 const corsOptions = {
   origin: (origin, callback) => {
