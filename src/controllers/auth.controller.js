@@ -103,6 +103,7 @@ const Login = async (req, res) => {
       httpOnly: true,
       sameSite: 'None',
       maxAge: 24 * 3600 * 1000,
+      
     });
 
     res.status(200).send({
