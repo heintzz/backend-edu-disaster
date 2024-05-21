@@ -9,6 +9,7 @@ router.use(VerifyMiddleware.verifyToken);
 router.get('/', StudentEvaluationController.getEvaluations);
 router.get('/:evaluationId', StudentEvaluationController.getEvaluationById);
 router.post('/', StudentEvaluationController.createEvaluations);
-router.put('/:evaluationId/answers', StudentEvaluationController.saveAnswers);
+router.put('/answers', StudentEvaluationController.saveAnswers);
+router.put('/answers/finish', StudentEvaluationController.submitAnswers);
 
 module.exports = router;

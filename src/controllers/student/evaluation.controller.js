@@ -1,4 +1,5 @@
 const pool = require('../../config/db');
+const soal = require('../../utils/soal');
 
 const getEvaluationById = async (req, res) => {
   const evaluationId = req.params.evaluationId;
@@ -100,16 +101,16 @@ const createEvaluations = async (req, res) => {
 };
 
 const saveAnswers = async (req, res) => {
-  const evaluationId = req.params.evaluationId;
   const answers = req.body;
+  const studentId = req.userId;
 
   const saveAnswerQuery = `
     UPDATE evaluations
     SET answers = $1, updated_at = NOW()
-    WHERE id = $2`;
+    WHERE student_id = $2`;
 
   try {
-    const { rows: answerRows } = await pool.query(saveAnswerQuery, [answers, evaluationId]);
+    const { rows: answerRows } = await pool.query(saveAnswerQuery, [answers, studentId]);
 
     res.status(200).send({
       success: true,
@@ -126,11 +127,50 @@ const saveAnswers = async (req, res) => {
   }
 };
 
+const submitAnswers = async (req, res) => {
+  const answers = req.body;
+  const studentId = req.userId;
+
+  let score = 0;
+  data.forEach((item) => {
+    const questionIndex = item.no - 1;
+    const userAnswer = item.answer.toUpperCase();
+    const correctAnswer = soal[questionIndex].correctAnswer;
+
+    if (userAnswer === correctAnswer) {
+      score++;
+    }
+  });
+
+  const submitAnswerQuery = `
+    UPDATE evaluations
+    SET answers = $1, is_completed = true, score = $2, updated_at = NOW()
+    WHERE student_id = $3
+    RETURNING id, student_id, score`;
+
+  try {
+    const { rows: answerRows } = await pool.query(submitAnswerQuery, [answers, score, studentId]);
+
+    res.status(200).send({
+      success: true,
+      message: 'answer submitted',
+      data: answerRows[0],
+    });
+  } catch {
+    res.status(500).send({
+      success: false,
+      message: 'internal server error',
+      data: [],
+    });
+  }
+};
+
 const StudentEvaluationController = {
   getEvaluations,
   getEvaluationById,
-  saveAnswers,
   createEvaluations,
+  saveAnswers,
+  submitAnswers,
 };
 
 module.exports = StudentEvaluationController;
