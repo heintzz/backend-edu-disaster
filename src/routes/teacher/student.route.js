@@ -9,5 +9,6 @@ router.use(VerifyMiddleware.verifyToken, VerifyMiddleware.verifyTeacher);
 router.get('/', TeacherStudentController.getStudentsByTeacherId);
 router.get('/:studentId/progress', TeacherStudentController.getStudentProgress);
 router.get('/:studentId/evaluations', TeacherStudentController.getStudentEvaluations);
+router.get('/statistics', TeacherStudentController.getStudentStatistics);
 
 module.exports = router;

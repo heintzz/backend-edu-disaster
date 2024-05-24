@@ -151,7 +151,7 @@ const submitAnswers = async (req, res) => {
     }
   });
 
-  score = (score / soal.length) * 100;
+  score = Math.floor((score / soal.length) * 100);
 
   const submitAnswerQuery = `
     UPDATE evaluations
@@ -167,7 +167,8 @@ const submitAnswers = async (req, res) => {
       message: 'answer submitted',
       data: answerRows[0],
     });
-  } catch {
+  } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
       message: 'internal server error',
