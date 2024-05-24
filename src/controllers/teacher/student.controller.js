@@ -1,4 +1,5 @@
 const pool = require('../../config/db');
+const soal = require('../../utils/soal');
 
 const getStudentsByTeacherId = async (req, res) => {
   const classId = req.query.class_id;
@@ -144,7 +145,7 @@ const getStudentStatistics = async (req, res) => {
 
     const { rows: rowsEvaluations } = await pool.query(getEvaluationsQuery, [...values]);
 
-    const meanScore = rowsEvaluations.reduce(
+    const totalScores = rowsEvaluations.reduce(
       (prev, curr) => {
         if (curr.score !== null) {
           prev.scores += curr.score;
@@ -159,7 +160,7 @@ const getStudentStatistics = async (req, res) => {
       success: true,
       data: {
         lesson_progress: Math.floor(learningProgress),
-        evaluation_accuracy: 0,
+        evaluation_accuracy: Math.floor(totalScores.scores / totalScores.long),
       },
     });
   } catch (error) {
@@ -172,11 +173,69 @@ const getStudentStatistics = async (req, res) => {
   }
 };
 
+const getAnswerStatistics = async (req, res) => {
+  const userId = req.userId;
+  const classId = req.query.classId;
+
+  const values = [userId];
+
+  let getEvaluationsQuery = `
+    SELECT u.name, e.answers
+    FROM users u 
+    JOIN students_classes sc
+    ON u.id = sc.student_id
+    JOIN classes c
+    ON sc.class_id = c.id
+    LEFT JOIN evaluations e
+    ON u.id = e.student_id
+    WHERE c.teacher_id = $1
+  `;
+
+  if (classId) {
+    getEvaluationsQuery += ` AND c.id = $${values.length + 1}`;
+    values.push(classId);
+  }
+
+  try {
+    const { rows } = await pool.query(getEvaluationsQuery, [...values]);
+    const studentAnswers = rows.map((row) => row.answers).filter((answer) => answer !== null);
+    const answers = studentAnswers.reduce((prev, curr) => {
+      curr.data.forEach((item) => {
+        const questionIndex = item.no - 1;
+        const userAnswer = item.answer.toUpperCase();
+        const correctAnswer = soal[questionIndex].correctAnswer;
+
+        if (userAnswer === correctAnswer) {
+          if (!prev[questionIndex]) {
+            prev[questionIndex] = 0;
+          }
+          prev[questionIndex] += 1;
+        } else {
+          prev[questionIndex] = 0;
+        }
+      });
+
+      return prev;
+    }, {});
+
+    res.status(200).send({
+      success: true,
+      data: {
+        correct_answer: Object.values(answers),
+        incorrect_answer: Object.values(answers).map((value) => studentAnswers.length - value),
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const TeacherStudentController = {
   getStudentsByTeacherId,
   getStudentProgress,
   getStudentEvaluations,
   getStudentStatistics,
+  getAnswerStatistics,
 };
 
 module.exports = TeacherStudentController;

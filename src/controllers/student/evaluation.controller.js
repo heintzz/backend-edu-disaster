@@ -88,9 +88,7 @@ const createEvaluations = async (req, res) => {
       userId,
       classId,
       {
-        data: {
-          answers: [],
-        },
+        data: [],
       },
     ]);
 

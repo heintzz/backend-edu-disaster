@@ -10,5 +10,6 @@ router.get('/', TeacherStudentController.getStudentsByTeacherId);
 router.get('/:studentId/progress', TeacherStudentController.getStudentProgress);
 router.get('/:studentId/evaluations', TeacherStudentController.getStudentEvaluations);
 router.get('/statistics', TeacherStudentController.getStudentStatistics);
+router.get('/statistics/answers', TeacherStudentController.getAnswerStatistics);
 
 module.exports = router;
