@@ -79,12 +79,20 @@ const createEvaluations = async (req, res) => {
   }
 
   const createEvaluationQuery = `
-    INSERT INTO evaluations (student_id, class_id)
-    VALUES ($1, $2)
+    INSERT INTO evaluations (student_id, class_id, answers)
+    VALUES ($1, $2, $3)
     RETURNING id, student_id, score, created_at, updated_at`;
 
   try {
-    const { rows: evaluationRows } = await pool.query(createEvaluationQuery, [userId, classId]);
+    const { rows: evaluationRows } = await pool.query(createEvaluationQuery, [
+      userId,
+      classId,
+      {
+        data: {
+          answers: [],
+        },
+      },
+    ]);
 
     res.status(200).send({
       success: true,
@@ -132,7 +140,8 @@ const submitAnswers = async (req, res) => {
   const studentId = req.userId;
 
   let score = 0;
-  data.forEach((item) => {
+
+  answers.data.forEach((item) => {
     const questionIndex = item.no - 1;
     const userAnswer = item.answer.toUpperCase();
     const correctAnswer = soal[questionIndex].correctAnswer;
@@ -141,6 +150,8 @@ const submitAnswers = async (req, res) => {
       score++;
     }
   });
+
+  score = (score / soal.length) * 100;
 
   const submitAnswerQuery = `
     UPDATE evaluations

@@ -10,6 +10,6 @@ router.get('/', StudentEvaluationController.getEvaluations);
 router.get('/:evaluationId', StudentEvaluationController.getEvaluationById);
 router.post('/', StudentEvaluationController.createEvaluations);
 router.put('/answers', StudentEvaluationController.saveAnswers);
-router.put('/answers/finish', StudentEvaluationController.submitAnswers);
+router.post('/answers/finish', StudentEvaluationController.submitAnswers);
 
 module.exports = router;
