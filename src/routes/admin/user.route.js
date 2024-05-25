@@ -3,23 +3,15 @@ const AdminUserController = require('../../controllers/admin/user.controller');
 const VerifyMiddleware = require('../../middleware/verify');
 
 const router = express.Router();
-router.get(
-  '/',
-  VerifyMiddleware.verifyToken,
-  VerifyMiddleware.verifyAdmin,
-  AdminUserController.getUsers
-);
-router.put(
-  '/:id/role',
-  VerifyMiddleware.verifyToken,
-  VerifyMiddleware.verifyAdmin,
-  AdminUserController.updateUserRole
-);
-router.delete(
-  '/:id',
-  VerifyMiddleware.verifyToken,
-  VerifyMiddleware.verifyAdmin,
-  AdminUserController.deleteUser
-);
+
+router.use(VerifyMiddleware.verifyToken, VerifyMiddleware.verifyAdmin);
+
+router.get('/', AdminUserController.getUsers);
+router.post('/', AdminUserController.createTeacherAccount);
+router.delete('/:id', AdminUserController.deleteUser);
+router.get('/:id', AdminUserController.getUserData);
+router.put('/:id/verify', AdminUserController.verifyTeacherAccount);
+router.put('/:id/role', AdminUserController.updateUserRole);
+router.delete('/:id', AdminUserController.deleteUser);
 
 module.exports = router;
