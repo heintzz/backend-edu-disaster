@@ -220,25 +220,25 @@ const deleteUser = async (req, res) => {
         DELETE FROM students_classes
         WHERE student_id = $1;
       `;
-      await client.query(deleteStudentsClasses, [studentId]);
-
-      const deleteUsers = `
-        DELETE FROM users
-        WHERE id = $1;
-      `;
-      await client.query(deleteUsers, [studentId]);
+      await client.query(deleteStudentsClasses, [id]);
 
       const deleteEvaluations = `
         DELETE FROM evaluations
         WHERE student_id = $1;
       `;
-      await client.query(deleteEvaluations, [studentId]);
+      await client.query(deleteEvaluations, [id]);
 
       const deleteProgress = `
         DELETE FROM progress
         WHERE student_id = $1;
       `;
-      await client.query(deleteProgress, [studentId]);
+      await client.query(deleteProgress, [id]);
+
+      const deleteUsers = `
+        DELETE FROM users
+        WHERE id = $1;
+      `;
+      await client.query(deleteUsers, [id]);
 
       await client.query('COMMIT');
       res.status(200).send({
