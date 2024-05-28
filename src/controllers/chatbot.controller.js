@@ -14,7 +14,7 @@ async function generateResponse(request) {
     temperature: 1,
     topK: 64,
     topP: 0.95,
-    maxOutputTokens: 300,
+    maxOutputTokens: 500,
   };
 
   const safetySettings = [
@@ -36,7 +36,12 @@ async function generateResponse(request) {
     },
   ];
 
-  const parts = [{ text: `input: ${request}` }, { text: 'output: ' }];
+  const parts = [
+    {
+      text: `input: ${request} jawab dengan format tag html seperti <div>, <br>, <em>, <p>, <strong>, <ul>, <li>. ensure it's completely wrapped`,
+    },
+    { text: 'output: ' },
+  ];
 
   const result = await model.generateContent({
     contents: [{ role: 'user', parts }],
