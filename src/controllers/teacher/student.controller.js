@@ -230,12 +230,86 @@ const getAnswerStatistics = async (req, res) => {
   }
 };
 
+const getStudentNotes = async (req, res) => {
+  const studentId = req.params.studentId;
+
+  const getNotesQuery = `
+    SELECT id, content
+    FROM notes
+    WHERE student_id = $1
+  `;
+
+  try {
+    const { rows } = await pool.query(getNotesQuery, [studentId]);
+    res.status(200).send({
+      success: true,
+      data: rows,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'internal server error',
+      data: [],
+    });
+  }
+};
+
+const createStudentNote = async (req, res) => {
+  const studentId = req.params.studentId;
+  const { content } = req.body;
+
+  const addNoteQuery = `
+    INSERT INTO notes (student_id, content)
+    VALUES ($1, $2)
+  `;
+
+  try {
+    await pool.query(addNoteQuery, [studentId, content]);
+    res.status(201).send({
+      success: true,
+      message: 'note added successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'internal server error',
+    });
+  }
+};
+
+const deleteStudentNote = async (req, res) => {
+  const studentId = req.params.studentId;
+  const noteId = req.params.noteId;
+
+  const deleteStudentNoteQuery = `
+    DELETE FROM notes 
+    WHERE student_id = $1 AND id = $2
+  `;
+
+  try {
+    await pool.query(deleteStudentNoteQuery, [studentId, noteId]);
+    res.status(200).send({
+      success: true,
+      message: 'note deleted successfully',
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'internal server error',
+    });
+  }
+};
+
 const TeacherStudentController = {
   getStudentsByTeacherId,
   getStudentProgress,
   getStudentEvaluations,
   getStudentStatistics,
   getAnswerStatistics,
+  getStudentNotes,
+  createStudentNote,
+  deleteStudentNote,
 };
 
 module.exports = TeacherStudentController;
