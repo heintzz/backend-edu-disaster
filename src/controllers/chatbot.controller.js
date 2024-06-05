@@ -38,7 +38,7 @@ async function generateResponse(request) {
 
   const parts = [
     {
-      text: `input: ${request} jawab dengan format tag html seperti <div>, <br>, <em>, <p>, <strong>, <ul>, <li>. ensure it's completely wrapped`,
+      text: `input: ${request} jawab dengan format tag html seperti <div>, <br>, <em>, <p>, <strong>, <ul>, <li> jika pertanyaan termasuk dalam kategori aman. ensure it's completely wrapped`,
     },
     { text: 'output: ' },
   ];
