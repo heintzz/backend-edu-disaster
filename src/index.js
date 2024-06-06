@@ -34,12 +34,13 @@ app.get('/', (req, res) => {
 const apiV1Router = express.Router();
 
 apiV1Router.use('/auth', require('./routes/general/auth.route'));
+apiV1Router.use('/profile', require('./routes/general/profile.route'));
+apiV1Router.use('/chatbot', require('./routes/general/chatbot.route'));
+apiV1Router.use('/institution', require('./routes/general/institution.route'));
 apiV1Router.use('/student', require('./routes/student/index.route'));
 apiV1Router.use('/admin', require('./routes/admin/index.route'));
 apiV1Router.use('/superadmin', require('./routes/superadmin/index.route'));
 apiV1Router.use('/teacher', require('./routes/teacher/index.route'));
-apiV1Router.use('/profile', require('./routes/general/profile.route'));
-apiV1Router.use('/chatbot', require('./routes/general/chatbot.route'));
 
 app.use('/api/v1', apiV1Router);
 
