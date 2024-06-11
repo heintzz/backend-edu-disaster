@@ -15,6 +15,7 @@ const getStudentsByTeacherId = async (req, res) => {
       JOIN classes c
       ON sc.class_id = c.id
       WHERE c.teacher_id = $1
+      ORDER BY u.id DESC
       `;
 
   if (classId) {

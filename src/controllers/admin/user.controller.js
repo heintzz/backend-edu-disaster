@@ -21,6 +21,7 @@ const getUsers = async (req, res) => {
         LEFT JOIN classes c ON u.id = c.teacher_id
         WHERE u.institution_id = $1 AND u.role = $2
         GROUP BY u.id, u.name, u.email, u.role, u.is_verified
+        ORDER BY u.id DESC
         `;
     } else if (role === ROLE.STUDENT) {
       getUsersQuery = `
@@ -30,6 +31,7 @@ const getUsers = async (req, res) => {
         JOIN students_classes sc ON u.id = sc.student_id        
         JOIN classes c ON sc.class_id = c.id        
         WHERE u.institution_id = $1 AND u.role = $2
+        ORDER BY u.id DESC
       `;
     } else {
       getUsersQuery += ` AND role = $2`;
